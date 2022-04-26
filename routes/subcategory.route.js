@@ -118,7 +118,7 @@ router.post('/update-subcategory/:sid', upload.array('image'), fireBase.fireBase
             image: 'https://firebasestorage.googleapis.com/v0/b/vastram-d3e69.appspot.com/o/' + request.files[0].filename + "?alt=media&token=abcddcba",
         }
     }).then(result => {
-        console.log(result);
+        
         if (result.modifiedCount){
             printLogger(2, `*********** sort *************${JSON.stringify(result.modifiedCount)}`, 'order');
             return response.status(200).json({ message: 'updated successfully' });
