@@ -4,7 +4,7 @@ const fireBase = require("../middle/fireBase");
 const { body, validationResult } = require('express-validator');
 const router = express.Router();
 const multer = require('multer');
-
+const Product = require('../model/product.model');
 const {printLogger} = require('../core/utility');
 const routeCache = require('route-cache');
 var storage = multer.diskStorage({
@@ -60,21 +60,31 @@ router.get('/subcategoryList', (request, response) => {
     }
 })
 
-router.delete('/deletecategory', (request, response) => {
+router.delete('/deleteSub/:id', (request, response) => {
     try{
-    SubCategory.deleteOne({ _id: request.params.id })
-        .then(result => {
+        Product.updateOne({subCategory: request.params.id}).then(result=>{
             console.log(result);
-            printLogger(2, `*********** delete category *************${JSON.stringify(result)}`, 'order');
-            return response.status(200).json({ status: 'SubCategory Deleted' });
-        })
-        .catch(err => {
+            SubCategory.deleteOne({ _id: request.params.id })
+            .then(result => {
+                console.log(result);
+                printLogger(2, `*********** delete category *************${JSON.stringify(result)}`, 'order');
+                return response.status(200).json({ status: 'SubCategory Deleted' });
+            })
+            .catch(err => {
+                console.log(err);
+                printLogger(0, `*********** delete category *************${JSON.stringify(err)}`, 'sub category');
+                return response.status(404).json({ status: 'SubCategory Not Deleted' });
+    
+            })
+        }).catch(err => {
             console.log(err);
-            printLogger(0, `*********** delete category *************${JSON.stringify(err)}`, 'sub category');
-            return response.status(404).json({ status: 'SubCategory Not Deleted' });
-
+                printLogger(0, `*********** delete category *************${JSON.stringify(err)}`, 'sub category');
+                return response.status(404).json({ status: 'Product Not Deleted' });
+    
         })
+   
     }catch(err){
+        console.log(err);
         printLogger(4, `*********** sort *************${JSON.stringify(err)}`, 'order');
         return response.status(500).json({ status: 'failed' });
     }
